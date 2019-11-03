@@ -10,6 +10,9 @@ import (
 type (
 	Entity interface {
 		Get(tx *sql.Tx) error
+		Post(tx *sql.Tx) error
+		Put(tx *sql.Tx) error
+		Delete(tx *sql.Tx) error
 
 		// SQL
 		Scan(interface{}) error
