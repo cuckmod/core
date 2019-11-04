@@ -3,6 +3,7 @@ package core
 import (
 	"database/sql"
 	"database/sql/driver"
+	"errors"
 	"reflect"
 	"sync"
 )
@@ -19,6 +20,78 @@ type (
 		Value() (driver.Value, error)
 	}
 )
+
+func Get(tx *sql.Tx, query string, ID int, dest ...interface{}) (err error) {
+	stmt, err := tx.Prepare(query)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(ID)
+	return row.Scan(dest...)
+}
+
+func Post(tx *sql.Tx, query string, args ...interface{}) (ID int, err error) {
+	stmt, err := tx.Prepare(query)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Exec(args...)
+	if err != nil {
+		return
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return
+	}
+	ID = int(id)
+	return
+}
+
+func Put(tx *sql.Tx, query string, args ...interface{}) error {
+	stmt, err := tx.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Exec(args...)
+	if err != nil {
+		return err
+	}
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if affected != 1 {
+		return errors.New("can't update entity")
+	}
+	return nil
+}
+
+func Delete(tx *sql.Tx, query string, ID int) error {
+	stmt, err := tx.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Exec(ID)
+	if err != nil {
+		return err
+	}
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if affected != 1 {
+		return errors.New("can't delete entity")
+	}
+	return nil
+}
 
 func GetAll(tx *sql.Tx, e Entity) (err error) {
 	errChan := make(chan error)
