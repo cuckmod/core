@@ -26,7 +26,7 @@ func GetAll(tx *sql.Tx, e Entity) (err error) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		innerGet(&wg, errChan, tx, e)
+		recursiveGet(&wg, errChan, tx, e)
 	}()
 	go func() {
 		wg.Wait()
@@ -40,7 +40,7 @@ func GetAll(tx *sql.Tx, e Entity) (err error) {
 	return
 }
 
-func innerGet(wg *sync.WaitGroup, errChan chan error, tx *sql.Tx, e Entity) {
+func recursiveGet(wg *sync.WaitGroup, errChan chan error, tx *sql.Tx, e Entity) {
 	if err := e.Get(tx); err != nil {
 		errChan <- err
 		return
@@ -52,7 +52,7 @@ func innerGet(wg *sync.WaitGroup, errChan chan error, tx *sql.Tx, e Entity) {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				innerGet(wg, errChan, tx, field.Interface().(Entity))
+				recursiveGet(wg, errChan, tx, field.Interface().(Entity))
 			}()
 		}
 	}
