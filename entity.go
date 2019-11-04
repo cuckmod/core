@@ -21,14 +21,14 @@ type (
 	}
 )
 
-func Get(tx *sql.Tx, query string, ID int, dest ...interface{}) (err error) {
+func Get(tx *sql.Tx, query string, key interface{}, dest ...interface{}) (err error) {
 	stmt, err := tx.Prepare(query)
 	if err != nil {
 		return
 	}
 	defer stmt.Close()
 
-	row := stmt.QueryRow(ID)
+	row := stmt.QueryRow(key)
 	return row.Scan(dest...)
 }
 
