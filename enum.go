@@ -44,9 +44,10 @@ func MarshalText(e Enumer) (text []byte, err error) {
 }
 
 func UnmarshalText(e interface{}, text []byte) (err error) {
-	for k, v := range *((e).(Enumer)).Values() {
+	value := reflect.ValueOf(e)
+	for k, v := range *(value.Interface().(Enumer)).Values() {
 		if v == string(text) {
-			reflect.ValueOf(e).Elem().SetInt(int64(k))
+			value.Elem().SetInt(int64(k))
 			return nil
 		}
 	}
