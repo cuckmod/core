@@ -21,6 +21,10 @@ type (
 	}
 )
 
+var (
+	NoAffect = errors.New("no affect")
+)
+
 func Get(tx *sql.Tx, query string, key interface{}, dest ...interface{}) (err error) {
 	stmt, err := tx.Prepare(query)
 	if err != nil {
@@ -67,7 +71,7 @@ func Put(tx *sql.Tx, query string, args ...interface{}) error {
 		return err
 	}
 	if affected != 1 {
-		return errors.New("can't update entity")
+		return NoAffect
 	}
 	return nil
 }
@@ -88,7 +92,7 @@ func Delete(tx *sql.Tx, query string, ID int) error {
 		return err
 	}
 	if affected != 1 {
-		return errors.New("can't delete entity")
+		return NoAffect
 	}
 	return nil
 }
