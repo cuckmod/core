@@ -18,6 +18,18 @@ func (f *FooEntity) Get(*sql.Tx) error {
 	return nil
 }
 
+func (f *FooEntity) Post(tx *sql.Tx) error {
+	return nil
+}
+
+func (f *FooEntity) Put(tx *sql.Tx) error {
+	return nil
+}
+
+func (f *FooEntity) Delete(tx *sql.Tx) error {
+	return nil
+}
+
 func (f *FooEntity) Scan(interface{}) error {
 	return nil
 }
@@ -35,6 +47,18 @@ func (b *BarEntity) Get(*sql.Tx) error {
 	b.Baz = BazEntity{
 		Id: b.Id + 1,
 	}
+	return nil
+}
+
+func (b *BarEntity) Post(tx *sql.Tx) error {
+	return nil
+}
+
+func (b *BarEntity) Put(tx *sql.Tx) error {
+	return nil
+}
+
+func (b *BarEntity) Delete(tx *sql.Tx) error {
 	return nil
 }
 
