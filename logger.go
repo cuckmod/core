@@ -63,14 +63,14 @@ func (f CustomFormatter) Format(entry *log.Entry) ([]byte, error) {
 
 		i := 0
 		for k, v := range entry.Data {
-			if regexp.MustCompile(`[\\s="]`).MatchString(k) || len(k) == 0 {
+			if regexp.MustCompile(`[\s="]`).MatchString(k) || len(k) == 0 {
 				buffer.WriteString(fmt.Sprintf(`"%s"`, k))
 			} else {
 				buffer.WriteString(k)
 			}
 			buffer.WriteRune('=')
 			value := fmt.Sprintf(`%v`, v)
-			if regexp.MustCompile(`[\\s="]`).MatchString(value) || len(value) == 0 {
+			if regexp.MustCompile(`[\s="]`).MatchString(value) || len(value) == 0 {
 				buffer.WriteString(fmt.Sprintf(`"%v"`, value))
 			} else {
 				buffer.WriteString(value)
