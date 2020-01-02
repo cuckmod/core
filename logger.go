@@ -5,6 +5,7 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
+	"regexp"
 	"strings"
 	"unicode/utf8"
 )
@@ -62,13 +63,17 @@ func (f CustomFormatter) Format(entry *log.Entry) ([]byte, error) {
 
 		i := 0
 		for k, v := range entry.Data {
-			if strings.ContainsRune(k, ' ') || strings.ContainsRune(k, '=') {
+			if regexp.MustCompile(`[\\s="]`).MatchString(k) {
 				buffer.WriteString(fmt.Sprintf(`"%s"`, k))
+			} else {
+				buffer.WriteString(k)
 			}
 			buffer.WriteRune('=')
 			value := fmt.Sprintf(`%v`, v)
-			if strings.ContainsRune(value, ' ') || strings.ContainsRune(value, '=') {
+			if regexp.MustCompile(`[\\s="]`).MatchString(value) {
 				buffer.WriteString(fmt.Sprintf(`"%v"`, value))
+			} else {
+				buffer.WriteString(value)
 			}
 			if i < len(entry.Data)-1 {
 				buffer.WriteRune(' ')
